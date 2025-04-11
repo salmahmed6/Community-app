@@ -42,7 +42,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 export const updateUser = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const { name, email, bio, avatarUrl } = req.body;
+      const data  = req.body;
       
       // Check if user exists
       const existingUser = await prisma.user.findUnique({
@@ -55,10 +55,10 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
       }
       
       // Check if email is already taken by another user
-      if (email !== existingUser.email) {
+      if (data.email && data.email !== existingUser.email) {
         const emailExists = await prisma.user.findUnique({
-          where: { email },
-        });
+          where: { email: data.email },
+      });
         
         if (emailExists) {
           res.status(400).json({ error: 'Email already exists' });
@@ -68,12 +68,7 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
       
       const updatedUser = await prisma.user.update({
         where: { id },
-        data: {
-          name,
-          email,
-          bio,
-          avatarUrl,
-        },
+        data: data ,
       });
       
       res.json(updatedUser);

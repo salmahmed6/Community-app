@@ -4,14 +4,14 @@ import { getUsers,
         createUser,
         updateUser,
 } from '../controllers/userController';
-import { validateUserData } from '../middleware/validation';
+import { validateUpdateUser,validateCreateUser  } from '../middleware/validation';
 import { RequestHandler } from 'express';
 
 const router = express.Router();
 
 router.get('/', getUsers);
 router.get('/:id', getUserById);
-router.post('/', validateUserData as RequestHandler, createUser);
-router.put('/:id', validateUserData as RequestHandler, updateUser);
+router.post('/', validateCreateUser as RequestHandler, createUser);
+router.patch('/:id', validateUpdateUser as RequestHandler, updateUser);
 
 export { router as userRouter };

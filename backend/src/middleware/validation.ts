@@ -8,9 +8,24 @@ const userSchema = z.object({
   avatarUrl: z.string().url().optional(),
 });
 
-export const validateUserData = (req: Request, res: Response, next: NextFunction) => {
+// Validation for full user creation (POST)
+export const validateCreateUser = (req: Request, res: Response, next: NextFunction) => {
   try {
     userSchema.parse(req.body);
+    next();
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: error.errors });
+    }
+    return res.status(400).json({ error: 'Invalid request data' });
+  }
+};
+
+// Validation for partial user update (PATCH)
+export const validateUpdateUser = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const updateSchema = userSchema.partial(); // makes all fields optional
+    updateSchema.parse(req.body);
     next();
   } catch (error) {
     if (error instanceof z.ZodError) {
